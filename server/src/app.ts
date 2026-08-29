@@ -3,6 +3,7 @@ import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import { errorMiddleware } from "./middleware/error.middleware.js";
+import authRoutes from "./routes/auth.routes.js";
 
 const app = express();
 
@@ -26,6 +27,6 @@ app.get("/api/v1/health", (_req, res) => {
     message: "LifeTrace API is healthy",
   });
 });
-
+app.use("/api/v1/auth", authRoutes);
 app.use(errorMiddleware);
 export default app;

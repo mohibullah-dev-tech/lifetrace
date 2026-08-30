@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
-import { createMemory } from "../services/memory.service.js";
+import { createMemory, getMemories } from "../services/memory.service.js";
 import { ApiError } from "../utils/api-error.js";
 import { ApiResponse } from "../utils/api-response.js";
 import type { CreateMemoryInput } from "../validations/memory.validation.js";
+import type { GetMemoriesQuery } from "../validations/memory.validation.js";
 
 export const createMemoryController = async (
   req: Request,
@@ -27,6 +28,35 @@ export const createMemoryController = async (
         201,
         memory,
         "Memory created successfully"
+      )
+    );
+};
+
+export const getMemoriesController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  if (!req.userId) {
+    throw new ApiError(
+      401,
+      "Authentication required"
+    );
+  }
+
+  const query = res.locals.validated;
+
+  const result = await getMemories(
+    req.userId,
+    query
+  );
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        result,
+        "Memories fetched successfully"
       )
     );
 };

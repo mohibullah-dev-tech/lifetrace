@@ -61,3 +61,47 @@ export const createMemorySchema = z.object({
 export type CreateMemoryInput = z.infer<
   typeof createMemorySchema
 >;
+
+export const getMemoriesQuerySchema = z.object({
+  page: z.coerce
+    .number()
+    .int()
+    .min(1)
+    .default(1),
+
+  limit: z.coerce
+    .number()
+    .int()
+    .min(1)
+    .max(50)
+    .default(10),
+
+  category: z
+    .enum([
+      "personal",
+      "career",
+      "education",
+      "travel",
+      "health",
+      "finance",
+      "relationship",
+      "other",
+    ])
+    .optional(),
+
+  mood: z
+    .enum([
+      "happy",
+      "excited",
+      "sad",
+      "angry",
+      "calm",
+      "stressed",
+      "neutral",
+    ])
+    .optional(),
+});
+
+export type GetMemoriesQuery = z.infer<
+  typeof getMemoriesQuerySchema
+>;

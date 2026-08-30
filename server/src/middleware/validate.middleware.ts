@@ -1,28 +1,32 @@
 import { NextFunction, Request, Response } from "express";
-import { ZodSchema } from "zod";
-import { ApiError } from "../utils/api-error.js";
+import { ZodError, ZodType } from "zod";
 
-export const validate = (schema: ZodSchema) => {
+export const validate = (
+  schema: ZodType,
+  source: "body" | "query" = "body"
+) => {
   return (
     req: Request,
     _res: Response,
     next: NextFunction
-  ): void => {
-    const result = schema.safeParse(req.body);
+  ) => {
+    try {
+      const data = schema.parse(req[source]);
 
-    if (!result.success) {
-      next(
-        new ApiError(
-          400,
-          "Validation failed",
-          result.error.flatten().fieldErrors
-        )
-      );
+      if (source === "body") {
+        req.body = data;
+      }
 
-      return;
+      _res.locals.validated = data;
+
+      next();
+    } catch (error) {
+      if (error instanceof ZodError) {
+        next(error);
+        return;
+      }
+
+      next(error);
     }
-
-    req.body = result.data;
-    next();
   };
 };

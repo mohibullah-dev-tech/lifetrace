@@ -82,3 +82,32 @@ export const getMemoryById = async (
 
   return memory;
 };
+
+export const updateMemory = async (
+  userId: string,
+  memoryId: string,
+  input: Record<string, unknown>
+) => {
+  const memory = await Memory.findOneAndUpdate(
+    {
+      _id: memoryId,
+      userId,
+    },
+    {
+      $set: input,
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+
+  if (!memory) {
+    throw new ApiError(
+      404,
+      "Memory not found"
+    );
+  }
+
+  return memory;
+};

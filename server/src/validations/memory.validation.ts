@@ -105,3 +105,9 @@ export const getMemoriesQuerySchema = z.object({
 export type GetMemoriesQuery = z.infer<
   typeof getMemoriesQuerySchema
 >;
+
+export const updateMemorySchema = createMemorySchema.partial();
+
+export type UpdateMemoryInput = z.infer<
+  typeof updateMemorySchema
+>;

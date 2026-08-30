@@ -4,6 +4,7 @@ import {
   createMemoryController,
   getMemoriesController,
   getMemoryByIdController,
+  updateMemoryController,
 } from "../controllers/memory.controller.js";
 
 import { authenticate } from "../middleware/auth.middleware.js";
@@ -29,6 +30,13 @@ router.get(
   authenticate,
   validate(getMemoriesQuerySchema, "query"),
   getMemoriesController
+);
+
+router.patch(
+  "/:id",
+  authenticate,
+  validate(updateMemorySchema),
+  updateMemoryController
 );
 
 router.get(

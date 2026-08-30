@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { createMemory, getMemories, getMemoryById,updateMemory } from "../services/memory.service.js";
+import { createMemory, getMemories, getMemoryById,updateMemory, deleteMemory } from "../services/memory.service.js";
 import { ApiError } from "../utils/api-error.js";
 import { ApiResponse } from "../utils/api-response.js";
 import type { CreateMemoryInput } from "../validations/memory.validation.js";
@@ -129,6 +129,42 @@ export const updateMemoryController = async (
         200,
         memory,
         "Memory updated successfully"
+      )
+    );
+};
+
+export const deleteMemoryController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  if (!req.userId) {
+    throw new ApiError(
+      401,
+      "Authentication required"
+    );
+  }
+
+  const { id } = req.params;
+
+  if (!id || Array.isArray(id)) {
+    throw new ApiError(
+      400,
+      "Valid memory ID is required"
+    );
+  }
+
+  await deleteMemory(
+    req.userId,
+    id
+  );
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        null,
+        "Memory deleted successfully"
       )
     );
 };

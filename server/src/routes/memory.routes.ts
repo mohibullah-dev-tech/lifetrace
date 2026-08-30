@@ -5,6 +5,7 @@ import {
   getMemoriesController,
   getMemoryByIdController,
   updateMemoryController,
+  deleteMemoryController,
 } from "../controllers/memory.controller.js";
 
 import { authenticate } from "../middleware/auth.middleware.js";
@@ -44,6 +45,12 @@ router.get(
   "/:id",
   authenticate,
   getMemoryByIdController
+);
+
+router.delete(
+  "/:id",
+  authenticate,
+  deleteMemoryController
 );
 
 export default router;

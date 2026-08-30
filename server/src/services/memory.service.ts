@@ -111,3 +111,21 @@ export const updateMemory = async (
 
   return memory;
 };
+export const deleteMemory = async (
+  userId: string,
+  memoryId: string
+) => {
+  const memory = await Memory.findOneAndDelete({
+    _id: memoryId,
+    userId,
+  });
+
+  if (!memory) {
+    throw new ApiError(
+      404,
+      "Memory not found"
+    );
+  }
+
+  return memory;
+};

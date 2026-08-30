@@ -14,6 +14,7 @@ import { validate } from "../middleware/validate.middleware.js";
 import {
   createMemorySchema,
   getMemoriesQuerySchema,
+  updateMemorySchema,
 } from "../validations/memory.validation.js";
 
 const router = Router();

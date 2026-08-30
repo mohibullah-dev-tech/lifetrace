@@ -3,6 +3,7 @@ import { Router } from "express";
 import {
   createMemoryController,
   getMemoriesController,
+  getMemoryByIdController,
 } from "../controllers/memory.controller.js";
 
 import { authenticate } from "../middleware/auth.middleware.js";
@@ -28,6 +29,12 @@ router.get(
   authenticate,
   validate(getMemoriesQuerySchema, "query"),
   getMemoriesController
+);
+
+router.get(
+  "/:id",
+  authenticate,
+  getMemoryByIdController
 );
 
 export default router;

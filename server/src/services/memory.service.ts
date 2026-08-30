@@ -1,4 +1,5 @@
 import { Memory } from "../models/memory.model.js";
+import { ApiError } from "../utils/api-error.js";
 
 interface GetMemoriesOptions {
   page: number;
@@ -61,4 +62,23 @@ export const getMemories = async (
       hasPreviousPage: page > 1,
     },
   };
+};
+
+export const getMemoryById = async (
+  userId: string,
+  memoryId: string
+) => {
+  const memory = await Memory.findOne({
+    _id: memoryId,
+    userId,
+  });
+
+  if (!memory) {
+    throw new ApiError(
+      404,
+      "Memory not found"
+    );
+  }
+
+  return memory;
 };

@@ -82,3 +82,20 @@ export const login = async (input: LoginInput) => {
     accessToken,
   };
 };
+export const getCurrentUser = async (userId: string) => {
+  const user = await User.findById(userId);
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  return {
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    avatar: user.avatar,
+    timezone: user.timezone,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
+  };
+};

@@ -2,7 +2,10 @@ import bcrypt from "bcrypt";
 import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/api-error.js";
 import { generateAccessToken } from "../utils/jwt.js";
-import type { RegisterInput } from "../validations/auth.validation.js";
+import type {
+  LoginInput,
+  RegisterInput,
+} from "../validations/auth.validation.js";
 
 export const register = async (input: RegisterInput) => {
   const existingUser = await User.findOne({
@@ -25,6 +28,47 @@ export const register = async (input: RegisterInput) => {
   });
 
   const accessToken = generateAccessToken(user._id.toString());
+
+  return {
+    user: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      avatar: user.avatar,
+      timezone: user.timezone,
+      createdAt: user.createdAt,
+    },
+    accessToken,
+  };
+};
+
+export const login = async (input: LoginInput) => {
+  const user = await User.findOne({
+    email: input.email,
+  }).select("+password");
+
+  if (!user) {
+    throw new ApiError(
+      401,
+      "Invalid email or password"
+    );
+  }
+
+  const isPasswordValid = await bcrypt.compare(
+    input.password,
+    user.password
+  );
+
+  if (!isPasswordValid) {
+    throw new ApiError(
+      401,
+      "Invalid email or password"
+    );
+  }
+
+  const accessToken = generateAccessToken(
+    user._id.toString()
+  );
 
   return {
     user: {

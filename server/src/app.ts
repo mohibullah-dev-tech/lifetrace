@@ -4,6 +4,7 @@ import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import { errorMiddleware } from "./middleware/error.middleware.js";
 import authRoutes from "./routes/auth.routes.js";
+import memoryRoutes from "./routes/memory.routes.js";
 
 const app = express();
 
@@ -29,4 +30,8 @@ app.get("/api/v1/health", (_req, res) => {
 });
 app.use("/api/v1/auth", authRoutes);
 app.use(errorMiddleware);
+app.use(
+  "/api/v1/memories",
+  memoryRoutes
+);
 export default app;

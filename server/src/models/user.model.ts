@@ -4,6 +4,8 @@ export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
+  bio?: string | null;
+  avatarUrl?: string | null;
   avatar?: string;
   timezone: string;
   createdAt: Date;
@@ -31,14 +33,26 @@ const userSchema = new Schema<IUser>(
     "Please provide a valid email address",
   ],
 },
-
+   
     password: {
       type: String,
       required: [true, "Password is required"],
       minlength: [8, "Password must be at least 8 characters"],
       select: false,
     },
+    
+    bio: {
+  type: String,
+  trim: true,
+  maxlength: 500,
+  default: null,
+},
 
+avatarUrl: {
+  type: String,
+  trim: true,
+  default: null,
+},
     avatar: {
       type: String,
       default: null,

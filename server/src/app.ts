@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import { errorMiddleware } from "./middleware/error.middleware.js";
 import authRoutes from "./routes/auth.routes.js";
 import memoryRoutes from "./routes/memory.routes.js";
+import userRoutes from "./routes/user.routes.js";
 
 const app = express();
 
@@ -33,5 +34,9 @@ app.use(errorMiddleware);
 app.use(
   "/api/v1/memories",
   memoryRoutes
+);
+app.use(
+  "/api/v1/users",
+  userRoutes
 );
 export default app;

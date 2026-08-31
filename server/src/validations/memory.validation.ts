@@ -100,6 +100,35 @@ export const getMemoriesQuerySchema = z.object({
       "neutral",
     ])
     .optional(),
+
+  search: z
+    .string()
+    .trim()
+    .optional(),
+
+  tag: z
+    .string()
+    .trim()
+    .optional(),
+
+  from: z
+    .string()
+    .datetime()
+    .optional(),
+
+  to: z
+    .string()
+    .datetime()
+    .optional(),
+
+  sort: z
+    .enum([
+      "eventDate",
+      "-eventDate",
+      "createdAt",
+      "-createdAt",
+    ])
+    .default("-eventDate"),
 });
 
 export type GetMemoriesQuery = z.infer<

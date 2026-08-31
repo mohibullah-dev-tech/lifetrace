@@ -1,5 +1,8 @@
 import { Memory } from "../models/memory.model.js";
 import { ApiError } from "../utils/api-error.js";
+import type {
+  GetMemoriesQuery,
+} from "../validations/memory.validation.js";
 
 interface GetMemoriesOptions {
   page: number;
@@ -22,29 +25,80 @@ export const createMemory = async (
 
 export const getMemories = async (
   userId: string,
-  options: GetMemoriesOptions
+  query: GetMemoriesQuery
 ) => {
-  const { page, limit, category, mood } = options;
+  const {
+    page = 1,
+    limit = 10,
+    category,
+    mood,
+    search,
+    tag,
+    from,
+    to,
+    sort = "-eventDate",
+  } = query;
 
   const filter: Record<string, unknown> = {
     userId,
   };
 
+  // Category filter
   if (category) {
     filter.category = category;
   }
 
+  // Mood filter
   if (mood) {
     filter.mood = mood;
+  }
+
+  // Tag filter
+  if (tag) {
+    filter.tags = tag;
+  }
+
+  // Search title + content
+  if (search) {
+    filter.$or = [
+      {
+        title: {
+          $regex: search,
+          $options: "i",
+        },
+      },
+      {
+        content: {
+          $regex: search,
+          $options: "i",
+        },
+      },
+    ];
+  }
+
+  // Date range
+  if (from || to) {
+    const eventDate: Record<string, Date> = {};
+
+    if (from) {
+      eventDate.$gte = new Date(from);
+    }
+
+    if (to) {
+      eventDate.$lte = new Date(to);
+    }
+
+    filter.eventDate = eventDate;
   }
 
   const skip = (page - 1) * limit;
 
   const [memories, total] = await Promise.all([
     Memory.find(filter)
-      .sort({ eventDate: -1 })
+      .sort(sort)
       .skip(skip)
-      .limit(limit),
+      .limit(limit)
+      .lean(),
 
     Memory.countDocuments(filter),
   ]);

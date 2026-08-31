@@ -9,6 +9,7 @@ import userRoutes from "./routes/user.routes.js";
 import timelineRoutes from "./routes/timeline.routes.js";
 import insightsRoutes from "./routes/insights.routes.js";
 import streakRoutes from "./routes/streak.routes.js";
+import dashboardRoutes from "./routes/dashboard.routes.js";
 
 
 const app = express();
@@ -54,5 +55,9 @@ app.use(
 app.use(
   "/api/v1/streak",
   streakRoutes
+);
+app.use(
+  "/api/v1/dashboard",
+  dashboardRoutes
 );
 export default app;

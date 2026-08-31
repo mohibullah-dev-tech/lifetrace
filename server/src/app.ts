@@ -8,6 +8,7 @@ import memoryRoutes from "./routes/memory.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import timelineRoutes from "./routes/timeline.routes.js";
 import insightsRoutes from "./routes/insights.routes.js";
+import streakRoutes from "./routes/streak.routes.js";
 
 
 const app = express();
@@ -49,5 +50,9 @@ app.use(
 app.use(
   "/api/v1/insights",
   insightsRoutes
+);
+app.use(
+  "/api/v1/streak",
+  streakRoutes
 );
 export default app;

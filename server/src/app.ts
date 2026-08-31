@@ -6,6 +6,7 @@ import { errorMiddleware } from "./middleware/error.middleware.js";
 import authRoutes from "./routes/auth.routes.js";
 import memoryRoutes from "./routes/memory.routes.js";
 import userRoutes from "./routes/user.routes.js";
+import timelineRoutes from "./routes/timeline.routes.js";
 
 const app = express();
 
@@ -38,5 +39,9 @@ app.use(
 app.use(
   "/api/v1/users",
   userRoutes
+);
+app.use(
+  "/api/v1/timeline",
+  timelineRoutes
 );
 export default app;

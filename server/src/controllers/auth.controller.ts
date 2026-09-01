@@ -3,6 +3,7 @@ import {
   getCurrentUser,
   login,
   register,
+  refreshAccessToken,
 } from "../services/auth.service.js";
 import { ApiResponse } from "../utils/api-response.js";
 import { ApiError } from "../utils/api-error.js";
@@ -66,6 +67,33 @@ export const getMe = async (
         200,
         user,
         "User profile fetched successfully"
+      )
+    );
+};
+export const refreshToken = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { refreshToken } = req.body;
+
+  if (!refreshToken) {
+    throw new ApiError(
+      400,
+      "Refresh token is required"
+    );
+  }
+
+  const result = await refreshAccessToken(
+    refreshToken
+  );
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        result,
+        "Access token refreshed successfully"
       )
     );
 };

@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/api-error.js";
-import { generateAccessToken, generateRefreshToken } from "../utils/jwt.js";
+import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "../utils/jwt.js";
 import type {
   LoginInput,
   RegisterInput,
@@ -106,5 +106,48 @@ export const getCurrentUser = async (userId: string) => {
     timezone: user.timezone,
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
+  };
+};
+export const refreshAccessToken = async (
+  refreshToken: string
+) => {
+  let payload: { userId: string };
+
+  try {
+    payload = verifyRefreshToken(refreshToken);
+  } catch {
+    throw new ApiError(
+      401,
+      "Invalid or expired refresh token"
+    );
+  }
+
+  const user = await User.findById(
+    payload.userId
+  ).select("+refreshToken");
+
+  if (!user) {
+    throw new ApiError(
+      401,
+      "User not found"
+    );
+  }
+
+  if (
+    !user.refreshToken ||
+    user.refreshToken !== refreshToken
+  ) {
+    throw new ApiError(
+      401,
+      "Refresh token has been revoked"
+    );
+  }
+
+  const accessToken = generateAccessToken(
+    user._id.toString()
+  );
+
+  return {
+    accessToken,
   };
 };

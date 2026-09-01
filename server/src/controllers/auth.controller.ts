@@ -4,6 +4,7 @@ import {
   login,
   register,
   refreshAccessToken,
+  logout, 
 } from "../services/auth.service.js";
 import { ApiResponse } from "../utils/api-response.js";
 import { ApiError } from "../utils/api-error.js";
@@ -94,6 +95,29 @@ export const refreshToken = async (
         200,
         result,
         "Access token refreshed successfully"
+      )
+    );
+};
+export const logoutUser = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  if (!req.userId) {
+    throw new ApiError(
+      401,
+      "Authentication required"
+    );
+  }
+
+  await logout(req.userId);
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        null,
+        "Logout successful"
       )
     );
 };

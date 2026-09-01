@@ -4,7 +4,12 @@ import {
   loginUser,
   registerUser,
   refreshToken,
+  logoutUser,
+  
 } from "../controllers/auth.controller.js";
+import {
+  authenticate,
+} from "../middleware/auth.middleware.js";
 
 import { validate } from "../middleware/validate.middleware.js";
 
@@ -30,5 +35,10 @@ router.post(
 router.post(
   "/refresh",
   refreshToken
+);
+router.post(
+  "/logout",
+  authenticate,
+  logoutUser
 );
 export default router;

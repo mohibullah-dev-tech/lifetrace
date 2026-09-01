@@ -151,3 +151,18 @@ export const refreshAccessToken = async (
     accessToken,
   };
 };
+export const logout = async (userId: string) => {
+  const user = await User.findById(userId).select(
+    "+refreshToken"
+  );
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  user.refreshToken = null;
+
+  await user.save();
+
+  return null;
+};

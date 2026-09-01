@@ -5,6 +5,7 @@ import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from ".
 import type {
   LoginInput,
   RegisterInput,
+  ChangePasswordInput,
 } from "../validations/auth.validation.js";
 
 export const register = async (input: RegisterInput) => {
@@ -160,6 +161,60 @@ export const logout = async (userId: string) => {
     throw new ApiError(404, "User not found");
   }
 
+  user.refreshToken = null;
+
+  await user.save();
+
+  return null;
+};
+
+export const changePassword = async (
+  userId: string,
+  input: ChangePasswordInput
+) => {
+  const user = await User.findById(userId).select(
+    "+password +refreshToken"
+  );
+
+  if (!user) {
+    throw new ApiError(
+      404,
+      "User not found"
+    );
+  }
+
+  const isCurrentPasswordValid =
+    await bcrypt.compare(
+      input.currentPassword,
+      user.password
+    );
+
+  if (!isCurrentPasswordValid) {
+    throw new ApiError(
+      401,
+      "Current password is incorrect"
+    );
+  }
+
+  const isSamePassword =
+    await bcrypt.compare(
+      input.newPassword,
+      user.password
+    );
+
+  if (isSamePassword) {
+    throw new ApiError(
+      400,
+      "New password must be different from current password"
+    );
+  }
+
+  user.password = await bcrypt.hash(
+    input.newPassword,
+    12
+  );
+
+  // Revoke existing refresh session
   user.refreshToken = null;
 
   await user.save();

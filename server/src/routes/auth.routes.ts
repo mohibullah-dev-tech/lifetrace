@@ -5,6 +5,7 @@ import {
   registerUser,
   refreshToken,
   logoutUser,
+  changePasswordUser,
   
 } from "../controllers/auth.controller.js";
 import {
@@ -16,6 +17,7 @@ import { validate } from "../middleware/validate.middleware.js";
 import {
   loginSchema,
   registerSchema,
+  changePasswordSchema,
 } from "../validations/auth.validation.js";
 
 const router = Router();
@@ -40,5 +42,11 @@ router.post(
   "/logout",
   authenticate,
   logoutUser
+);
+router.post(
+  "/change-password",
+  authenticate,
+  validate(changePasswordSchema),
+  changePasswordUser
 );
 export default router;

@@ -5,12 +5,14 @@ import {
   register,
   refreshAccessToken,
   logout, 
+  changePassword,
 } from "../services/auth.service.js";
 import { ApiResponse } from "../utils/api-response.js";
 import { ApiError } from "../utils/api-error.js";
 import type {
   LoginInput,
   RegisterInput,
+  ChangePasswordInput,
 } from "../validations/auth.validation.js";
 
 export const registerUser = async (
@@ -118,6 +120,32 @@ export const logoutUser = async (
         200,
         null,
         "Logout successful"
+      )
+    );
+};
+export const changePasswordUser = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  if (!req.userId) {
+    throw new ApiError(
+      401,
+      "Authentication required"
+    );
+  }
+
+  await changePassword(
+    req.userId,
+    req.body as ChangePasswordInput
+  );
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        null,
+        "Password changed successfully"
       )
     );
 };

@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/api-error.js";
-import { generateAccessToken } from "../utils/jwt.js";
+import { generateAccessToken, generateRefreshToken } from "../utils/jwt.js";
 import type {
   LoginInput,
   RegisterInput,
@@ -45,7 +45,7 @@ export const register = async (input: RegisterInput) => {
 export const login = async (input: LoginInput) => {
   const user = await User.findOne({
     email: input.email,
-  }).select("+password");
+  }).select("+password +refreshToken");
 
   if (!user) {
     throw new ApiError(
@@ -66,9 +66,17 @@ export const login = async (input: LoginInput) => {
     );
   }
 
-  const accessToken = generateAccessToken(
-    user._id.toString()
-  );
+  const userId = user._id.toString();
+
+  const accessToken =
+    generateAccessToken(userId);
+
+  const refreshToken =
+    generateRefreshToken(userId);
+
+  user.refreshToken = refreshToken;
+
+  await user.save();
 
   return {
     user: {
@@ -80,6 +88,7 @@ export const login = async (input: LoginInput) => {
       createdAt: user.createdAt,
     },
     accessToken,
+    refreshToken,
   };
 };
 export const getCurrentUser = async (userId: string) => {

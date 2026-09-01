@@ -4,6 +4,7 @@ export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
+  refreshToken?: string | null;
   bio?: string | null;
   avatarUrl?: string | null;
   avatar?: string;
@@ -40,7 +41,11 @@ const userSchema = new Schema<IUser>(
       minlength: [8, "Password must be at least 8 characters"],
       select: false,
     },
-    
+    refreshToken: {
+  type: String,
+  default: null,
+  select: false,
+},
     bio: {
   type: String,
   trim: true,

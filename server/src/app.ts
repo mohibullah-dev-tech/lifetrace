@@ -10,7 +10,7 @@ import timelineRoutes from "./routes/timeline.routes.js";
 import insightsRoutes from "./routes/insights.routes.js";
 import streakRoutes from "./routes/streak.routes.js";
 import dashboardRoutes from "./routes/dashboard.routes.js";
-
+import attachmentRoutes from "./routes/attachment.routes.js";
 
 const app = express();
 
@@ -59,5 +59,9 @@ app.use(
 app.use(
   "/api/v1/dashboard",
   dashboardRoutes
+);
+app.use(
+  "/api/v1/attachments",
+  attachmentRoutes
 );
 export default app;

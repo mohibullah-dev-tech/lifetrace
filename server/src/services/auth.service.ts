@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt";
+import crypto from "node:crypto";
 import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/api-error.js";
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "../utils/jwt.js";
@@ -220,4 +221,51 @@ export const changePassword = async (
   await user.save();
 
   return null;
+};
+export const forgotPassword = async (
+  email: string
+) => {
+  const user = await User.findOne({
+    email: email.toLowerCase(),
+  }).select(
+    "+passwordResetToken +passwordResetExpires"
+  );
+
+  // Don't reveal whether the email exists
+  if (!user) {
+    return {
+      message:
+        "If an account exists with this email, a password reset link has been generated.",
+    };
+  }
+
+  // Generate secure random token
+  const resetToken =
+    crypto.randomBytes(32).toString("hex");
+
+  // Store only hashed token in database
+  const hashedToken =
+    crypto
+      .createHash("sha256")
+      .update(resetToken)
+      .digest("hex");
+
+  user.passwordResetToken = hashedToken;
+
+  // Token expires in 15 minutes
+  user.passwordResetExpires = new Date(
+    Date.now() + 15 * 60 * 1000
+  );
+
+  await user.save();
+
+  // Development only
+  return {
+    message:
+      "If an account exists with this email, a password reset link has been generated.",
+    resetToken:
+      process.env.NODE_ENV !== "production"
+        ? resetToken
+        : undefined,
+  };
 };

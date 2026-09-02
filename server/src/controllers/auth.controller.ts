@@ -6,6 +6,7 @@ import {
   refreshAccessToken,
   logout, 
   changePassword,
+  forgotPassword,
 } from "../services/auth.service.js";
 import { ApiResponse } from "../utils/api-response.js";
 import { ApiError } from "../utils/api-error.js";
@@ -146,6 +147,24 @@ export const changePasswordUser = async (
         200,
         null,
         "Password changed successfully"
+      )
+    );
+};
+export const forgotPasswordUser = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { email } = req.body;
+
+  const result = await forgotPassword(email);
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        result,
+        result.message
       )
     );
 };

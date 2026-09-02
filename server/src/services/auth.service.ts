@@ -269,3 +269,57 @@ export const forgotPassword = async (
         : undefined,
   };
 };
+export const resetPassword = async (
+  token: string,
+  newPassword: string
+) => {
+  // Hash the token received from the user
+  const hashedToken = crypto
+    .createHash("sha256")
+    .update(token)
+    .digest("hex");
+
+  const user = await User.findOne({
+    passwordResetToken: hashedToken,
+    passwordResetExpires: {
+      $gt: new Date(),
+    },
+  }).select(
+    "+password +refreshToken +passwordResetToken +passwordResetExpires"
+  );
+
+  if (!user) {
+    throw new ApiError(
+      400,
+      "Invalid or expired password reset token"
+    );
+  }
+
+  const isSamePassword = await bcrypt.compare(
+    newPassword,
+    user.password
+  );
+
+  if (isSamePassword) {
+    throw new ApiError(
+      400,
+      "New password must be different from current password"
+    );
+  }
+
+  user.password = await bcrypt.hash(
+    newPassword,
+    12
+  );
+
+  // Clear reset credentials
+  user.passwordResetToken = null;
+  user.passwordResetExpires = null;
+
+  // Invalidate existing sessions
+  user.refreshToken = null;
+
+  await user.save();
+
+  return null;
+};

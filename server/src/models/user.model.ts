@@ -5,6 +5,8 @@ export interface IUser extends Document {
   email: string;
   password: string;
   refreshToken?: string | null;
+  passwordResetToken?: string | null;
+  passwordResetExpires?: Date | null;
   bio?: string | null;
   avatarUrl?: string | null;
   avatar?: string;
@@ -33,6 +35,17 @@ const userSchema = new Schema<IUser>(
     /^\S+@\S+\.\S+$/,
     "Please provide a valid email address",
   ],
+},
+passwordResetToken: {
+  type: String,
+  default: null,
+  select: false,
+},
+
+passwordResetExpires: {
+  type: Date,
+  default: null,
+  select: false,
 },
    
     password: {

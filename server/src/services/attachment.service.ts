@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 import Attachment from "../models/attachment.model.js";
-import Memory from "../models/memory.model.js";
+import { Memory } from "../models/memory.model.js";
 import cloudinary from "../config/cloudinary.js";
 import {
   uploadBufferToCloudinary,

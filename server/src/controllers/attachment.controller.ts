@@ -13,11 +13,23 @@ import { ApiError } from "../utils/api-error.js";
 import { ApiResponse } from "../utils/api-response.js";
 
 // ==========================================
+// Types
+// ==========================================
+
+type MemoryParams = {
+  memoryId: string;
+};
+
+type AttachmentParams = {
+  attachmentId: string;
+};
+
+// ==========================================
 // UPLOAD ATTACHMENT
 // ==========================================
 
 export const uploadAttachment = async (
-  req: Request,
+  req: Request<MemoryParams>,
   res: Response
 ): Promise<void> => {
   if (!req.userId) {
@@ -67,7 +79,7 @@ export const uploadAttachment = async (
 
 export const getMemoryAttachmentsUser =
   async (
-    req: Request,
+    req: Request<MemoryParams>,
     res: Response
   ): Promise<void> => {
     if (!req.userId) {
@@ -109,7 +121,7 @@ export const getMemoryAttachmentsUser =
 
 export const deleteAttachmentUser =
   async (
-    req: Request,
+    req: Request<AttachmentParams>,
     res: Response
   ): Promise<void> => {
     if (!req.userId) {

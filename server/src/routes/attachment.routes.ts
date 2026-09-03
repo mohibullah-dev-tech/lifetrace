@@ -2,6 +2,8 @@ import { Router } from "express";
 
 import {
   uploadAttachment,
+  getMemoryAttachmentsUser,
+  deleteAttachmentUser,
 } from "../controllers/attachment.controller.js";
 
 import {
@@ -14,11 +16,35 @@ import {
 
 const router = Router();
 
+// ==========================================
+// Upload Attachment
+// ==========================================
+
 router.post(
   "/memories/:memoryId",
   authenticate,
   upload.single("file"),
   uploadAttachment
+);
+
+// ==========================================
+// Get Memory Attachments
+// ==========================================
+
+router.get(
+  "/memories/:memoryId",
+  authenticate,
+  getMemoryAttachmentsUser
+);
+
+// ==========================================
+// Delete Attachment
+// ==========================================
+
+router.delete(
+  "/:attachmentId",
+  authenticate,
+  deleteAttachmentUser
 );
 
 export default router;
